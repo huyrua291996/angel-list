@@ -75,312 +75,312 @@ Util Functions
 
 
 def _format_query(query):
-  if len(query.split()) > 1:
-    query = '+'.join(query.split())
-  return query
+  	if len(query.split()) > 1:
+    	query = '+'.join(query.split())
+  	return query
 
 
 def _enc_data(data):
-  return urllib.urlencode(data)
+  	return urllib.urlencode(data)
 
 
 def _get_request(url):
-  return json.loads(urllib2.urlopen(url).read())
+  	return json.loads(urllib2.urlopen(url).read())
 
 
 def _post_request(url, post_data):
-  return json.loads(_get_request(urllib2.Request(url,
+  	return json.loads(_get_request(urllib2.Request(url,
                                                  _enc_data(post_data),
                                                  _POST_HEADER)))
 
 def _del_request(url, del_data):
-  del_params = _enc_data(del_data)
-  request = urllib2.Request(url, del_params)
-  request.get_method = _DELETE_METHOD
-  request.add_header(*_DELETE_HEADER)
-  return json.loads(urrlib2.build_opener(urllib2.HTTPHandler).open(
+  	del_params = _enc_data(del_data)
+  	request = urllib2.Request(url, del_params)
+  	request.get_method = _DELETE_METHOD
+  	request.add_header(*_DELETE_HEADER)
+  	return json.loads(urrlib2.build_opener(urllib2.HTTPHandler).open(
                                                                 request).read())
 
 class AngelList(object):
 
 
-  def __init__(self, client_id, client_secret, access_token):
-    self.client_id = client_id
-    self.client_secret = client_secret
-    self.access_token = access_token
+  	def __init__(self, client_id, client_secret, access_token):
+    	self.client_id = client_id
+    	self.client_secret = client_secret
+    	self.access_token = access_token
     # TODO(try to abstract the url(beginning of it))
     #self.url =
 
-  def get_jobs(self, page=1):
-    return _get_request(_JOBS.format(c_api=_C_API_BEGINNING,
+  	def get_jobs(self, page=1):
+    	return _get_request(_JOBS.format(c_api=_C_API_BEGINNING,
                                                      api=_API_VERSION,
                                                       pg=page,
                                                       at=self.access_token))
 
-  def get_job_by_id(self, id_):
-    url = _JOBS_ID.format(c_api=_C_API_BEGINNING,
+  	def get_job_by_id(self, id_):
+    	url = _JOBS_ID.format(c_api=_C_API_BEGINNING,
                                                 api=_API_VERSION,
                                                 id_=id_)
-    return _get_request(url)
+    	return _get_request(url)
 
-  def get_startup_jobs(self, id_):
-    return _get_request(_STARTUP_ID_JOBS.format(c_api=_C_API_BEGINNING,
+  	def get_startup_jobs(self, id_):
+    	return _get_request(_STARTUP_ID_JOBS.format(c_api=_C_API_BEGINNING,
                                                         api=_API_VERSION,
                                                         id_=id_,
                                                         at=self.access_token))
 
-  def get_tag_jobs(self, id_,page=1):
-    url = _TAG_ID_JOBS.format(c_api=_C_API_BEGINNING,
+  	def get_tag_jobs(self, id_,page=1):
+    	url = _TAG_ID_JOBS.format(c_api=_C_API_BEGINNING,
                                                     api=_API_VERSION,
                                                     id_=id_)
-    return _get_request(url)
+    	return _get_request(url)
 
 
-  def get_comments(self, commentable_type, id_):
+  	def get_comments(self, commentable_type, id_):
     """
     commentable_type: 'Press', 'Review', 'Startup', 'StartupRole', 'StatusUpdate'
     """
-    return _get_request(_COM.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_COM.format(c_api=_C_API_BEGINNING,
                                             ct=commentable_type,
                                             id_=id_,
                                             api=_API_VERSION,
                                             at=self.access_token))
 
-  def get_likes(self, likable_type, likable_id):
+  	def get_likes(self, likable_type, likable_id):
     """
     likable_type: 'Comment', 'Press', 'Review', 'StartupRole', 'StatusUpdate'
     likable_id: id of the object that the likes of it you are interested
     """
-    return _get_request(_LIKES.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_LIKES.format(c_api=_C_API_BEGINNING,
                                               api=_API_VERSION,
                                               lt=likable_type,
                                               li=likable_id,
                                               at=self.access_token))
 
-  def post_likes(self, likable_type, likable_id):
-    raise NotImplementedError()
+  	def post_likes(self, likable_type, likable_id):
+    	raise NotImplementedError()
 
-  def delete_likes(self, id_):
-    raise NotImplementedError()
+  	def delete_likes(self, id_):
+    	raise NotImplementedError()
 
-  def get_messages(self):
-    return _get_request(_MESSAGES.format(c_api=_C_API_BEGINNING,
+  	def get_messages(self):
+    	return _get_request(_MESSAGES.format(c_api=_C_API_BEGINNING,
                                                  api=_API_VERSION,
                                                  at=self.access_token))
 
-  def get_messages_by_thread_id(self, id_):
-    return _get_request(_MESSAGES_THREAD.format(c_api=_C_API_BEGINNING,
+  	def get_messages_by_thread_id(self, id_):
+    	return _get_request(_MESSAGES_THREAD.format(c_api=_C_API_BEGINNING,
                                                         api=_API_VERSION,
                                                         id_=id_,
                                                         at=self.access_token))
 
-  def post_messages(self, thread_id, recipient_id, body):
-    raise NotImplementedError()
+  	def post_messages(self, thread_id, recipient_id, body):
+    	raise NotImplementedError()
 
-  def post_messages_mark(self, thread_ids):
-    raise NotImplementedError()
+  	def post_messages_mark(self, thread_ids):
+    	raise NotImplementedError()
 
-  def get_paths(self, user_ids=None, startup_ids=None, direction=None):
+  	def get_paths(self, user_ids=None, startup_ids=None, direction=None):
     """
     user_ids: paths between you and these users
     startup_ids: paths between you and these startups
     direction: 'following' or 'followed'
     """
-    if user_ids is None and startup_ids is None and direction is None:
-      raise Exception('At least one input argument should be different than None')
-    if isinstance(user_ids, list):
-      user_ids = ','.join(list(map(lambda k: str(k), user_ids)))
-    if isinstance(startup_ids, list):
-      startup_ids = ','.join(list(map(lambda k: str(k), startup_ids)))
+    	if user_ids is None and startup_ids is None and direction is None:
+      		raise Exception('At least one input argument should be different than None')
+    	if isinstance(user_ids, list):
+      		user_ids = ','.join(list(map(lambda k: str(k), user_ids)))
+    	if isinstance(startup_ids, list):
+      		startup_ids = ','.join(list(map(lambda k: str(k), startup_ids)))
 
-    paths_url = _PATHS.format(c_api=_C_API_BEGINNING,
+    	paths_url = _PATHS.format(c_api=_C_API_BEGINNING,
                                       api=_API_VERSION,
                                       at=self.access_token)
-    if not user_ids is None:
-      paths_url += '&' + _USER_IDS_SUFFIX.format(user_ids=user_ids)
-    if not startup_ids is None:
-      paths_url += '&' + _STARTUP_IDS_SUFFIX.format(
+    	if not user_ids is None:
+      		paths_url += '&' + _USER_IDS_SUFFIX.format(user_ids=user_ids)
+    	if not startup_ids is None:
+      		paths_url += '&' + _STARTUP_IDS_SUFFIX.format(
                                                     startup_ids=startup_ids)
-    if not direction is None:
-      paths_url += '&' + _DIRECTION_SUFFIX.format(direction=direction)
-    return _get_request(paths_url)
+    	if not direction is None:
+      		paths_url += '&' + _DIRECTION_SUFFIX.format(direction=direction)
+    	return _get_request(paths_url)
 
-  def get_press(self, startup_id):
-    return _get_request(_PRESS.format(c_api=_C_API_BEGINNING,
+  	def get_press(self, startup_id):
+    	return _get_request(_PRESS.format(c_api=_C_API_BEGINNING,
                                               id_=startup_id,
                                               api=_API_VERSION,
                                               at=self.access_token))
 
-  def get_press_by_id(self, press_id):
-    return _get_request(_PRESS_BY_ID.format(c_api=_C_API_BEGINNING,
+  	def get_press_by_id(self, press_id):
+    	return _get_request(_PRESS_BY_ID.format(c_api=_C_API_BEGINNING,
                                                     id_=press_id,
                                                     api=_API_VERSION,
                                                     at=self.access_token))
 
   # TODO
   # requires scope "invest" ?
-  def get_reservations(self):
-    try:
-      return _get_request(_RESERVATIONS.format(c_api=_C_API_BEGINNING,
+  	def get_reservations(self):
+    	try:
+      		return _get_request(_RESERVATIONS.format(c_api=_C_API_BEGINNING,
                                                        api=_API_VERSION,
                                                        t=self.access_token))
-    except (RuntimeError, TypeError, NameError) as e:
-      print(e)
-      raise NotImplementedError()
+    	except (RuntimeError, TypeError, NameError) as e:
+      		print(e)
+      		raise NotImplementedError()
 
   # TODO
   # requires scope "invest"?
-  def get_reservations_of_startup(self, id_):
-    return _get_request(_RESERVATIONS_ID.format(c_api=_C_API_BEGINNING,
+  	def get_reservations_of_startup(self, id_):
+    	return _get_request(_RESERVATIONS_ID.format(c_api=_C_API_BEGINNING,
                                                         api=_API_VERSION,
                                                         at=self.access_token))
 
   # TODO
-  def get_accrediation(self):
-    try:
+  	def get_accrediation(self):
+    	try:
     #print(_ACCREDIATION.format(c_api=_C_API_BEGINNING, api=_API_VERSION,
     #                                    at=self.access_token))
-      return _get_request(_ACCREDIATION.format(c_api=_C_API_BEGINNING,
+      	return _get_request(_ACCREDIATION.format(c_api=_C_API_BEGINNING,
                                                      api=_API_VERSION,
                                                      at=self.access_token))
-    except (RuntimeError, TypeError, NameError):
-      raise NotImplementedError()
+    	except (RuntimeError, TypeError, NameError):
+      		raise NotImplementedError()
 
-  def post_intros(self, id_, note=None):
-    raise NotImplementedError()
+ 	def post_intros(self, id_, note=None):
+    	raise NotImplementedError()
 
-  def get_user(self, id_):
-    return _get_request(_USERS.format(c_api=_C_API_BEGINNING,
+  	def get_user(self, id_):
+    	return _get_request(_USERS.format(c_api=_C_API_BEGINNING,
                                               id_=id_,
                                               api=_API_VERSION,
                                               at=self.access_token))
 
-  def get_user_roles(self, id_):
-    return _get_request(_USERS_R.format(c_api=_C_API_BEGINNING,
+  	def get_user_roles(self, id_):
+    	return _get_request(_USERS_R.format(c_api=_C_API_BEGINNING,
                                                            id_=id_,
                                                            api=_API_VERSION,
                                                            at=self.access_token))
 
-  def get_users_batch(self, ids):
+  	def get_users_batch(self, ids):
     """
     Ids: a list of ids that we want to return
     """
     # Allowed maximum number of ids is 50
-    assert len(ids) <= 50
-    ids_ = ','.join(ids)
-    url = _USERS_BATCH.format(c_api=_C_API_BEGINNING,
+    	assert len(ids) <= 50
+    	ids_ = ','.join(ids)
+    	url = _USERS_BATCH.format(c_api=_C_API_BEGINNING,
                                               api=_API_VERSION,
                                               ids=ids_,
 					      at=self.access_token)
-    return _get_request(url)
+    	return _get_request(url)
 
   # TODO
   # Not working
-  def get_users_by_search(self, slug, email=None):
-    request_url = _USERS_S.format(c_api=_C_API_BEGINNING,
+  	def get_users_by_search(self, slug, email=None):
+    	request_url = _USERS_S.format(c_api=_C_API_BEGINNING,
                                           api=_API_VERSION,
                                           at=self.access_token)
-    if email is not None:
-      request_url += _MD5.format(md5=hashlib.md5(email).hexdigest())
-    return _get_request(request_url)
+    	if email is not None:
+      		request_url += _MD5.format(md5=hashlib.md5(email).hexdigest())
+    	return _get_request(request_url)
 
-  def get_self(self):
-    return _get_request(_SELF.format(c_api=_C_API_BEGINNING,
+  	def get_self(self):
+    	return _get_request(_SELF.format(c_api=_C_API_BEGINNING,
                                              api=_API_VERSION,
                                              at=self.access_token))
-  def get_followers(self, id_):
-    return _get_request(_FOLLOWERS.format(c_api=_C_API_BEGINNING,
+  	def get_followers(self, id_):
+    	return _get_request(_FOLLOWERS.format(c_api=_C_API_BEGINNING,
                                                   api=_API_VERSION,
                                                   id_=id_,
                                                   at=self.access_token))
 
-  def get_followers_ids(self, id_):
-    return _get_request(F_IDS_TEMPLATE.format(c_api=_C_API_BEGINNING,
+  	def get_followers_ids(self, id_):
+    	return _get_request(F_IDS_TEMPLATE.format(c_api=_C_API_BEGINNING,
                                               api=_API_VERSION,
                                               id_=id_,
                                               at=self.access_token))
 
-  def get_following(self, id_):
-    return _get_request(_FOLLOWING.format(c_api=_C_API_BEGINNING,
+  	def get_following(self, id_):
+    	return _get_request(_FOLLOWING.format(c_api=_C_API_BEGINNING,
                                                   api=_API_VERSION,
                                                   id_=id_,
                                                   at=self.access_token))
 
-  def get_following_ids(self, id_):
-    return _get_request(_FOLLOWING_IDS.format(c_api=_C_API_BEGINNING,
+  	def get_following_ids(self, id_):
+    	return _get_request(_FOLLOWING_IDS.format(c_api=_C_API_BEGINNING,
                                                  api=_API_VERSION,
                                                  id_=id_,
                                                  at=self.access_token))
 
-  def get_follows_relationship(self, source_id, target_type, target_id):
-    return _get_request(_FOLLOWS_R.format(c_api=_C_API_BEGINNING,
+  	def get_follows_relationship(self, source_id, target_type, target_id):
+    	return _get_request(_FOLLOWS_R.format(c_api=_C_API_BEGINNING,
                                                                 api=_API_VERSION,
                                                                 s=source_id,
                                                                 t=target_type,
                                                                 t_id=target_id,
                                                                 at=self.access_token))
 
-  def get_follows_batch(self, batch_ids):
-    return _get_request(_FOLLOWS_B.format(c_api=_C_API_BEGINNING,
+  	def get_follows_batch(self, batch_ids):
+    	return _get_request(_FOLLOWS_B.format(c_api=_C_API_BEGINNING,
                                                                api=_API_VERSION,
                                                                batch_ids=','.join(batch_ids),
                                                                at=self.access_token))
 
-  def get_startup_followers(self, id_):
-    return _get_request(_STARTUP_F.format(c_api=_C_API_BEGINNING,
+  	def get_startup_followers(self, id_):
+    	return _get_request(_STARTUP_F.format(c_api=_C_API_BEGINNING,
                                                   api=_API_VERSION,
                                                   id_=id_,
                                                   at=self.access_token))
 
-  def get_startup_followers_ids(self, id_):
-    return _get_request(S__FOLLOWER_IDS.format(c_api=_C_API_BEGINNING,
+  	def get_startup_followers_ids(self, id_):
+    	return _get_request(S__FOLLOWER_IDS.format(c_api=_C_API_BEGINNING,
                                                api=_API_VERSION,
                                                id_=id_,
                                                at=self.access_token))
 
   # Tags
-  def get_tags(self, id_):
-    return _get_request(_TAGS.format(c_api=_C_API_BEGINNING,
+  	def get_tags(self, id_):
+    	return _get_request(_TAGS.format(c_api=_C_API_BEGINNING,
                                        api=_API_VERSION,
                                        id_=id_,
                                        at=self.access_token))
 
-  def get_tags_children(self, id_):
-    return _get_request(_TAGS_CHILDREN.format(c_api=_C_API_BEGINNING,
+  	def get_tags_children(self, id_):
+    	return _get_request(_TAGS_CHILDREN.format(c_api=_C_API_BEGINNING,
                                                                       api=_API_VERSION,
                                                                       id_=id_,
                                                                       at=self.access_token))
 
-  def get_tags_parents(self, id_):
-    return _get_request(_TAGS_PARENTS.format(c_api=_C_API_BEGINNING,
+  	def get_tags_parents(self, id_):
+    	return _get_request(_TAGS_PARENTS.format(c_api=_C_API_BEGINNING,
                                                                       api=_API_VERSION,
                                                                       id_=id_,
                                                                       at=self.access_token))
 
-  def get_tags_startups(self, id_):
-    return _get_request(_TAGS_STARTUPS.format(c_api=_C_API_BEGINNING,
+  	def get_tags_startups(self, id_):
+    	return _get_request(_TAGS_STARTUPS.format(c_api=_C_API_BEGINNING,
                                                                       api=_API_VERSION,
                                                                       id_=id_,
 								      at=self.access_token))
 
-  def get_tags_users(self, id_):
+  	def get_tags_users(self, id_):
     """ Get a particular user which are tagged based on the id_
     """
-    return _get_request(_TAGS_USERS.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_TAGS_USERS.format(c_api=_C_API_BEGINNING,
                                                                       api=_API_VERSION,
                                                                       id_=id_,
                                                                       at=self.access_token))
 
   # STARTUP Section
-  def get_startup(self, id_):
+  	def get_startup(self, id_):
     """ Get startup based on id
     """
-    return _get_request(_STARTUP.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_STARTUP.format(c_api=_C_API_BEGINNING,
                                         api=_API_VERSION,
                                         id_=id_,
                                         at=self.access_token))
 
-  def get_startup_roles(self, user_id=None, startup_id=None, role=None, direction='incoming'):
+  	def get_startup_roles(self, user_id=None, startup_id=None, role=None, direction='incoming'):
     """
     user_id ->The user role you want to view
     startup_id -> The startup whose roles you want to view
@@ -388,85 +388,85 @@ class AngelList(object):
     direction ->Either incoming or outgoing
     """
 
-    if user_id is None and startup_id is None:
-      raise Exception("You need to provide at least one parameter")
-    url = _STARTUP_R.format(c_api=_C_API_BEGINNING,
+    	if user_id is None and startup_id is None:
+      		raise Exception("You need to provide at least one parameter")
+    	url = _STARTUP_R.format(c_api=_C_API_BEGINNING,
                                           api=_API_VERSION,
                                           at=self.access_token)
-    if user_id is not None:
-      url += '&user_id=' + str(user_id)
-    if startup_id is not None:
-      url += '&startup_id=' + str(startup_id)
-    if role is not None:
-      url += '&role=' + role
-    url += '&direction' + direction
-    return _get_request(url)
+    	if user_id is not None:
+      		url += '&user_id=' + str(user_id)
+    	if startup_id is not None:
+      		url += '&startup_id=' + str(startup_id)
+    	if role is not None:
+      		url += '&role=' + role
+    		url += '&direction' + direction
+    	return _get_request(url)
 
-  def get_startup_comments(self, id_):
+  	def get_startup_comments(self, id_):
     """ Retrieve the comments of a particular startup
     """
-    return _get_request(_STARTUP_C.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_STARTUP_C.format(c_api=_C_API_BEGINNING,
                                                                api=_API_VERSION,
                                                                id_=id_,
                                                                at=self.access_token))
 
-  def get_startups_filtered_by(self, filter_='raising'):
+  	def get_startups_filtered_by(self, filter_='raising'):
     """ Get startups based on which companies are raising funding
     """
-    url = _STARTUP_RAISING.format(c_api=_C_API_BEGINNING,
+   		url = _STARTUP_RAISING.format(c_api=_C_API_BEGINNING,
                                                                          api=_API_VERSION,
                                                                          filter_=filter_,
                                                                          at=self.access_token)
-    return _get_request(url)
+    	return _get_request(url)
 
-  def get_status_updates(self, startup_id):
-    """ Get status updates of a startup
-    """
-    return _get_request(_STATUS_U.format(c_api=_C_API_BEGINNING,
+  	def get_status_updates(self, startup_id):
+    	""" Get status updates of a startup
+    	"""
+    	return _get_request(_STATUS_U.format(c_api=_C_API_BEGINNING,
                                                              api=_API_VERSION,
                                                              startup_id=startup_id,
                                                              at=self.access_token))
 
 
   # SEARCH Section
-  def get_search_for_slugs(self, slug):
+  	def get_search_for_slugs(self, slug):
     """ Search for a particular slug
     """
-    return _get_request(_SLUG_SEARCH.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_SLUG_SEARCH.format(c_api=_C_API_BEGINNING,
                                             api=_API_VERSION,
                                             slug=_format_query(slug),
                                             at=self.access_token))
 
 
-  def get_search(self, query, type_=None):
+  	def get_search(self, query, type_=None):
     """Search for query, type_ is optional.
     type_: 'User', 'Startup', 'MarketTag', 'LocationTag'
     """
-    search_url = _S_SEARCH.format(c_api=_C_API_BEGINNING,
+    	search_url = _S_SEARCH.format(c_api=_C_API_BEGINNING,
                                   api=_API_VERSION,
                                   query=_format_query(query),
                                   at=self.access_token)
-    if type_ is not None:
-      search_url + _TYPE_SUFFIX.format(type_=type_)
-    return _get_request(search_url)
+    	if type_ is not None:
+      		search_url + _TYPE_SUFFIX.format(type_=type_)
+    	return _get_request(search_url)
 
 
   # Reviews Section
-  def get_reviews(self, user_id):
+  	def get_reviews(self, user_id):
     """ Get reviews for a particular user
     """
-    url = _REVIEWS_USER.format(c_api=_C_API_BEGINNING,
+    	url = _REVIEWS_USER.format(c_api=_C_API_BEGINNING,
                                                 api=_API_VERSION,
                                                 user_id=user_id,
                                                 at=self.access_token)
-    return _get_request(url)
+    	return _get_request(url)
 
 
-  def get_review_id(self, id_):
+  	def get_review_id(self, id_):
     """ Get a particular review id, independent from the user_id and
     startup_id
     """
-    return _get_request(_REVIEW_ID.format(c_api=_C_API_BEGINNING,
+    	return _get_request(_REVIEW_ID.format(c_api=_C_API_BEGINNING,
                                                               api=_API_VERSION,
                                                               id_=id_,
                                                               at=self.access_token))
